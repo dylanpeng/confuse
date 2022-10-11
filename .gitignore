@@ -1,0 +1,4 @@
+/bin/*
+/go.sum
+/lib/proto/*
+/logs/*
