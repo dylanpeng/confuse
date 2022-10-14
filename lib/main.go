@@ -1,6 +1,7 @@
 package main
 
 import (
+	"confuse/common/entity"
 	"fmt"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -18,7 +19,7 @@ func main() {
 	//dataUser := &DataUser{Id: 1}
 	//db.First(dataUser)
 
-	dataUser := &DataUser{
+	dataUser := &entity.DataUser{
 		Name:       "test",
 		CreateTime: 1000,
 		UpdateTime: 2000,
@@ -27,15 +28,4 @@ func main() {
 	db.Create(dataUser)
 
 	fmt.Printf("%+v \n", dataUser)
-}
-
-type DataUser struct {
-	Id         int64 `gorm:"primaryKey"`
-	Name       string
-	CreateTime int64
-	UpdateTime int64
-}
-
-func (*DataUser) TableName() string {
-	return "data_user"
 }
