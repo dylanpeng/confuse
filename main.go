@@ -3,7 +3,6 @@ package main
 import (
 	"confuse/common"
 	"confuse/common/config"
-	"confuse/common/entity"
 	"confuse/common/model"
 	"fmt"
 )
@@ -36,25 +35,30 @@ func main() {
 		fmt.Printf("Init Db failed. err: %s", err)
 	}
 
-	dataUser := &entity.DataUser{
-		Name:       "test",
-		CreateTime: 10009,
-		UpdateTime: 20009,
-	}
+	//dataUser := &entity.DataUser{
+	//	Name:       "test",
+	//	CreateTime: 10009,
+	//	UpdateTime: 20009,
+	//}
+	//
+	//err = model.User.Add(dataUser)
+	//if err != nil {
+	//	fmt.Printf("Create err:%s\n", err)
+	//	return
+	//}
+	//
+	//dataUser2 := &entity.DataUser{
+	//	Id: 6,
+	//}
+	//
+	//err = model.User.Get(dataUser2)
+	//if err != nil {
+	//	fmt.Printf("Get err:%s\n", err)
+	//	return
+	//}
 
-	err = model.User.Add(dataUser)
+	err = model.User.BatchInsertUsers()
 	if err != nil {
-		fmt.Printf("Create err:%s\n", err)
-		return
-	}
-
-	dataUser2 := &entity.DataUser{
-		Id: 6,
-	}
-
-	err = model.User.Get(dataUser2)
-	if err != nil {
-		fmt.Printf("Get err:%s\n", err)
-		return
+		fmt.Printf("BatchInsertUsers Db failed. err: %s", err)
 	}
 }
