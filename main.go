@@ -3,6 +3,7 @@ package main
 import (
 	"confuse/common"
 	"confuse/common/config"
+	"confuse/common/model"
 	"fmt"
 )
 
@@ -70,4 +71,19 @@ func main() {
 	//if err != nil {
 	//	fmt.Printf("AddWithAssociation Db failed. err: %s", err)
 	//}
+
+	//list, err := model.User.QueryByName("test1")
+	//if err != nil {
+	//	fmt.Printf("QueryByName Db failed. err: %s", err)
+	//	return
+	//}
+	//fmt.Printf("list: %+v", list)
+
+	err = model.User.QueryWithRowsScan("test1")
+	if err != nil {
+		fmt.Printf("QueryByName Db failed. err: %s", err)
+		return
+	}
+
+	return
 }

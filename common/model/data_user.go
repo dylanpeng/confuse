@@ -1,6 +1,8 @@
 package model
 
-import "confuse/common/entity"
+import (
+	"confuse/common/entity"
+)
 
 var User = &userModel{
 	DbBase: &DbBase{
@@ -76,3 +78,44 @@ func (u *userModel) AddByMap() (err error) {
 //	err = db.Create(dataUser).Error
 //	return
 //}
+
+func (u *userModel) QueryByName(name string) (list []*entity.DataUser, err error) {
+	db, err := u.getWriteDB()
+
+	if err != nil {
+		return
+	}
+
+	list = make([]*entity.DataUser, 0, 8)
+
+	err = db.Where("name = ?", name).Order("create_time desc, id").Find(&list).Error
+	//err = db.Find(&list, "name = ? and id = ?", name, 19).Error
+
+	return
+}
+
+func (u *userModel) QueryWithRowsScan(name string) (err error) {
+	db, err := u.getWriteDB()
+
+	if err != nil {
+		return
+	}
+
+	rows, err := db.Model(&entity.DataUser{}).Where("name = ?", name).Rows()
+	if err != nil {
+		return
+	}
+
+	for rows.Next() {
+		var id, createTime, updateTime int64
+		var n string
+		user := &entity.DataUser{}
+
+		rows.Scan(&id, &n, &createTime, &updateTime)
+		db.ScanRows(rows, user)
+
+		continue
+	}
+
+	return
+}
