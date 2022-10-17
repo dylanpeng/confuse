@@ -3,7 +3,6 @@ package main
 import (
 	"confuse/common"
 	"confuse/common/config"
-	"confuse/common/model"
 	"fmt"
 )
 
@@ -57,8 +56,18 @@ func main() {
 	//	return
 	//}
 
-	err = model.User.BatchInsertUsers()
-	if err != nil {
-		fmt.Printf("BatchInsertUsers Db failed. err: %s", err)
-	}
+	//err = model.User.BatchInsertUsers()
+	//if err != nil {
+	//	fmt.Printf("BatchInsertUsers Db failed. err: %s", err)
+	//}
+
+	//err = model.User.AddByMap()
+	//if err != nil {
+	//	fmt.Printf("AddByMap Db failed. err: %s", err)
+	//}
+
+	//err = model.User.AddWithAssociation()
+	//if err != nil {
+	//	fmt.Printf("AddWithAssociation Db failed. err: %s", err)
+	//}
 }
