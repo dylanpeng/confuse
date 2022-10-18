@@ -42,12 +42,24 @@ func (d *DbBase) Add(entity entity.IEntity) (err error) {
 	return
 }
 
-func (d *DbBase) Update() (err error) {
+func (d *DbBase) Update(entity entity.IEntity, params map[string]interface{}) (err error) {
+	db, err := common.GetDb(d.writeDbName)
+
+	if err != nil {
+		return
+	}
+
+	if params == nil {
+		err = db.Save(entity).Error
+	} else {
+		err = db.Model(entity).Updates(params).Error
+	}
+
 	return
 }
 
 func (d *DbBase) Get(entity entity.IEntity) (err error) {
-	db, err := common.GetDb(d.readDbName)
+	db, err := common.GetDb(d.writeDbName)
 
 	if err != nil {
 		return

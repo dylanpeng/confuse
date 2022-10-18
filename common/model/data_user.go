@@ -172,3 +172,15 @@ func (u *userModel) QueryUserCount() (count int64, err error) {
 	err = db.Model(&entity.DataUser{}).Where("name = ?", "test1").Count(&count).Error
 	return
 }
+
+func (u *userModel) QueryByRaw() (list []*entity.DataUser, err error) {
+	db, err := u.getWriteDB()
+
+	if err != nil {
+		return
+	}
+
+	list = make([]*entity.DataUser, 0, 8)
+	err = db.Raw("select * from data_user where name = ?", "test").Scan(&list).Error
+	return
+}

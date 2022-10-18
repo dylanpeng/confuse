@@ -91,9 +91,23 @@ func main() {
 	//	return
 	//}
 
-	_, err = model.User.QueryUserCount()
+	//_, err = model.User.QueryUserCount()
+	//if err != nil {
+	//	fmt.Printf("QueryUserCount Db failed. err: %s", err)
+	//	return
+	//}
+
+	//user := &entity.DataUser{
+	//	Id: 1,
+	//}
+	//model.User.Get(user)
+	//params := map[string]interface{}{}
+	//params["name"] = "aaa"
+	//model.User.Update(user, params)
+
+	_, err = model.User.QueryByRaw()
 	if err != nil {
-		fmt.Printf("QueryUserCount Db failed. err: %s", err)
+		fmt.Printf("QueryByRaw Db failed. err: %s", err)
 		return
 	}
 
