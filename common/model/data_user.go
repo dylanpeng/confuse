@@ -2,6 +2,7 @@ package model
 
 import (
 	"confuse/common/entity"
+	"gorm.io/gorm"
 )
 
 var User = &userModel{
@@ -117,5 +118,57 @@ func (u *userModel) QueryWithRowsScan(name string) (err error) {
 		continue
 	}
 
+	return
+}
+
+func (u *userModel) PageQuery(page int, pageSize int) (list []*entity.DataUserPart, err error) {
+	db, err := u.getWriteDB()
+
+	if err != nil {
+		return
+	}
+
+	list = make([]*entity.DataUserPart, 0, 8)
+
+	err = db.Session(&gorm.Session{QueryFields: true}).Offset((page - 1) * pageSize).Limit(pageSize).Order("id desc").Find(&list).Error
+	//err = db.Find(&list, "name = ? and id = ?", name, 19).Error
+
+	//db.Clauses()
+	return
+}
+
+func (u *userModel) ConditionName(name string) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Where("name = ?", name)
+	}
+}
+
+func (u *userModel) ConditionId(db *gorm.DB) *gorm.DB {
+	return db.Where("id = ?", 13)
+}
+
+func (u *userModel) QueryWithScope() (list []*entity.DataUser, err error) {
+	db, err := u.getWriteDB()
+
+	if err != nil {
+		return
+	}
+
+	list = make([]*entity.DataUser, 0, 8)
+
+	err = db.Scopes(u.ConditionName("test1"), u.ConditionId).Find(&list).Error
+	//err = db.Find(&list, "name = ? and id = ?", name, 19).Error
+
+	return
+}
+
+func (u *userModel) QueryUserCount() (count int64, err error) {
+	db, err := u.getWriteDB()
+
+	if err != nil {
+		return
+	}
+
+	err = db.Model(&entity.DataUser{}).Where("name = ?", "test1").Count(&count).Error
 	return
 }

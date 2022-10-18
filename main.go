@@ -79,9 +79,21 @@ func main() {
 	//}
 	//fmt.Printf("list: %+v", list)
 
-	err = model.User.QueryWithRowsScan("test1")
+	//_, err = model.User.PageQuery(2, 2)
+	//if err != nil {
+	//	fmt.Printf("QueryByName Db failed. err: %s", err)
+	//	return
+	//}
+
+	//_, err = model.User.QueryWithScope()
+	//if err != nil {
+	//	fmt.Printf("QueryWithScope Db failed. err: %s", err)
+	//	return
+	//}
+
+	_, err = model.User.QueryUserCount()
 	if err != nil {
-		fmt.Printf("QueryByName Db failed. err: %s", err)
+		fmt.Printf("QueryUserCount Db failed. err: %s", err)
 		return
 	}
 
