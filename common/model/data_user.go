@@ -184,3 +184,35 @@ func (u *userModel) QueryByRaw() (list []*entity.DataUser, err error) {
 	err = db.Raw("select * from data_user where name = ?", "test").Scan(&list).Error
 	return
 }
+
+func (u *userModel) Trans() (err error) {
+	db, err := u.getWriteDB()
+	if err != nil {
+		return
+	}
+
+	user := &entity.DataUser{
+		Id: 1,
+	}
+
+	tx := db.Begin()
+	//defer func() {
+	//
+	//}
+
+	err = tx.First(user).Error
+	if err != nil {
+		return
+	}
+
+	user.Name = "tans"
+
+	err = tx.Save(user).Error
+	if err != nil {
+		return
+	}
+
+	db.Commit()
+
+	return
+}
