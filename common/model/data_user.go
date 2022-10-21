@@ -196,23 +196,29 @@ func (u *userModel) Trans() (err error) {
 	}
 
 	tx := db.Begin()
-	//defer func() {
-	//
-	//}
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+
+		if err != nil {
+			tx.Rollback()
+		}
+	}()
 
 	err = tx.First(user).Error
 	if err != nil {
 		return
 	}
 
-	user.Name = "tans"
+	user.Name = "tans1"
 
 	err = tx.Save(user).Error
 	if err != nil {
 		return
 	}
 
-	db.Commit()
+	err = tx.Commit().Error
 
 	return
 }

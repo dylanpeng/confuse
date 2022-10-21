@@ -105,9 +105,15 @@ func main() {
 	//params["name"] = "aaa"
 	//model.User.Update(user, params)
 
-	_, err = model.User.QueryByRaw()
+	//_, err = model.User.QueryByRaw()
+	//if err != nil {
+	//	fmt.Printf("QueryByRaw Db failed. err: %s", err)
+	//	return
+	//}
+
+	err = model.User.Trans()
 	if err != nil {
-		fmt.Printf("QueryByRaw Db failed. err: %s", err)
+		fmt.Printf("Trans Db failed. err: %s", err)
 		return
 	}
 
