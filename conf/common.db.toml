@@ -1,0 +1,22 @@
+
+[db.main-master]
+host            = "127.0.0.1"
+port            = 3306
+user            = "dev"
+password        = "123!@#qweASD"
+charset         = "utf8mb4"
+database        = "test"
+timeout         = 3
+max_idle_conns  = 20
+max_conn_ttl    = 300
+
+[db.main-slave]
+host            = "127.0.0.1"
+port            = 3306
+user            = "dev"
+password        = "123!@#qweASD"
+charset         = "utf8mb4"
+database        = "test"
+timeout         = 3
+max_idle_conns  = 20
+max_conn_ttl    = 300

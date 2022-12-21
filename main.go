@@ -5,44 +5,34 @@ import (
 	"confuse/common/config"
 	"confuse/common/entity"
 	"confuse/common/model"
-	"confuse/lib/gorm"
+	"flag"
 	"fmt"
+	"github.com/BurntSushi/toml"
+)
+
+var (
+	configFile = flag.String("c", "config.toml", "config file path")
 )
 
 func main() {
-	conf := config.Config{}
+	// parse flag
+	flag.Parse()
 
-	conf.DB = make(map[string]*gorm.Config)
+	conf := &config.Config{}
 
-	conf.DB["master"] = &gorm.Config{
-		Host:         "127.0.0.1",
-		Port:         3306,
-		User:         "dev",
-		Password:     "123!@#qweASD",
-		Charset:      "utf8mb4",
-		Database:     "test",
-		Timeout:      3,
-		MaxIdleConns: 20,
-		MaxConnTtl:   300,
-	}
+	m, err := toml.DecodeFile(*configFile, conf)
 
-	conf.DB["slave"] = &gorm.Config{
-		Host:         "127.0.0.1",
-		Port:         3306,
-		User:         "dev",
-		Password:     "123!@#qweASD",
-		Charset:      "utf8mb4",
-		Database:     "test",
-		Timeout:      3,
-		MaxIdleConns: 20,
-		MaxConnTtl:   300,
+	if err != nil {
+		fmt.Printf("toml decode failed. err: %s | m: %s", err, m)
+		return
 	}
 
 	_ = conf.Init()
 
-	err := common.InitDB()
+	err = common.InitDB()
 	if err != nil {
 		fmt.Printf("Init Db failed. err: %s", err)
+		return
 	}
 
 	//dataUser := &entity.DataUser{

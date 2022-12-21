@@ -7,8 +7,8 @@ import (
 
 var User = &userModel{
 	baseDBModel: createDBModel(
-		"slave",
-		"master",
+		"main-slave",
+		"main-master",
 	),
 }
 
