@@ -1,14 +1,18 @@
 package config
 
+import "confuse/lib/gorm"
+
 type Config struct {
-	DBConfigs []*DBConfig
+	DB map[string]*gorm.Config
 }
 
-type DBConfig struct {
-	Name         string
-	UserName     string
-	Password     string
-	SourceUrl    string
-	Port         string
-	DataBaseName string
+var conf *Config
+
+func (c *Config) Init() (err error) {
+	conf = c
+	return
+}
+
+func GetConfig() *Config {
+	return conf
 }

@@ -3,34 +3,44 @@ package main
 import (
 	"confuse/common"
 	"confuse/common/config"
+	"confuse/common/entity"
 	"confuse/common/model"
+	"confuse/lib/gorm"
 	"fmt"
 )
 
 func main() {
 	conf := config.Config{}
 
-	conf.DBConfigs = make([]*config.DBConfig, 0, 8)
+	conf.DB = make(map[string]*gorm.Config)
 
-	conf.DBConfigs = append(conf.DBConfigs, &config.DBConfig{
-		Name:         "master",
-		UserName:     "dev",
+	conf.DB["master"] = &gorm.Config{
+		Host:         "127.0.0.1",
+		Port:         3306,
+		User:         "dev",
 		Password:     "123!@#qweASD",
-		SourceUrl:    "127.0.0.1",
-		Port:         "3306",
-		DataBaseName: "test",
-	})
+		Charset:      "utf8mb4",
+		Database:     "test",
+		Timeout:      3,
+		MaxIdleConns: 20,
+		MaxConnTtl:   300,
+	}
 
-	conf.DBConfigs = append(conf.DBConfigs, &config.DBConfig{
-		Name:         "slave",
-		UserName:     "dev",
+	conf.DB["slave"] = &gorm.Config{
+		Host:         "127.0.0.1",
+		Port:         3306,
+		User:         "dev",
 		Password:     "123!@#qweASD",
-		SourceUrl:    "127.0.0.1",
-		Port:         "3306",
-		DataBaseName: "test2",
-	})
+		Charset:      "utf8mb4",
+		Database:     "test",
+		Timeout:      3,
+		MaxIdleConns: 20,
+		MaxConnTtl:   300,
+	}
 
-	err := common.InitDB(conf.DBConfigs)
+	_ = conf.Init()
+
+	err := common.InitDB()
 	if err != nil {
 		fmt.Printf("Init Db failed. err: %s", err)
 	}
@@ -47,15 +57,15 @@ func main() {
 	//	return
 	//}
 	//
-	//dataUser2 := &entity.DataUser{
-	//	Id: 6,
-	//}
-	//
-	//err = model.User.Get(dataUser2)
-	//if err != nil {
-	//	fmt.Printf("Get err:%s\n", err)
-	//	return
-	//}
+	dataUser2 := &entity.DataUser{
+		Id: 6,
+	}
+
+	err = model.User.Get(dataUser2)
+	if err != nil {
+		fmt.Printf("Get err:%s\n", err)
+		return
+	}
 
 	//err = model.User.BatchInsertUsers()
 	//if err != nil {
@@ -111,11 +121,11 @@ func main() {
 	//	return
 	//}
 
-	err = model.User.Trans()
-	if err != nil {
-		fmt.Printf("Trans Db failed. err: %s", err)
-		return
-	}
+	//err = model.User.Trans()
+	//if err != nil {
+	//	fmt.Printf("Trans Db failed. err: %s", err)
+	//	return
+	//}
 
 	return
 }

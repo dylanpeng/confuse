@@ -17,6 +17,14 @@ func (*DataUser) TableName() string {
 	return "data_user"
 }
 
+func (e *DataUser) PrimarySeted() bool {
+	return e.Id > 0
+}
+
+func (e *DataUser) String() string {
+	return fmt.Sprintf("%+v", *e)
+}
+
 type DataUserPart struct {
 	Id   int64 `gorm:"primaryKey"`
 	Name string
@@ -24,6 +32,14 @@ type DataUserPart struct {
 
 func (*DataUserPart) TableName() string {
 	return "data_user"
+}
+
+func (e *DataUserPart) PrimarySeted() bool {
+	return e.Id > 0
+}
+
+func (e *DataUserPart) String() string {
+	return fmt.Sprintf("%+v", *e)
 }
 
 func (u *DataUserPart) AfterFind(db *gorm.DB) (err error) {

@@ -6,18 +6,18 @@ import (
 )
 
 var User = &userModel{
-	DbBase: &DbBase{
-		readDbName:  "slave",
-		writeDbName: "master",
-	},
+	baseDBModel: createDBModel(
+		"slave",
+		"master",
+	),
 }
 
 type userModel struct {
-	*DbBase
+	*baseDBModel
 }
 
 func (u *userModel) BatchInsertUsers() (err error) {
-	db, err := u.getWriteDB()
+	db, err := u.getDB(true)
 
 	if err != nil {
 		return
@@ -44,7 +44,7 @@ func (u *userModel) BatchInsertUsers() (err error) {
 }
 
 func (u *userModel) AddByMap() (err error) {
-	db, err := u.getWriteDB()
+	db, err := u.getDB(true)
 
 	if err != nil {
 		return
@@ -61,7 +61,7 @@ func (u *userModel) AddByMap() (err error) {
 }
 
 //func (u *userModel) AddWithAssociation() (err error) {
-//	db, err := u.getWriteDB()
+//	db, err := u.getDB()
 //
 //	if err != nil {
 //		return
@@ -81,7 +81,7 @@ func (u *userModel) AddByMap() (err error) {
 //}
 
 func (u *userModel) QueryByName(name string) (list []*entity.DataUser, err error) {
-	db, err := u.getWriteDB()
+	db, err := u.getDB(false)
 
 	if err != nil {
 		return
@@ -96,7 +96,7 @@ func (u *userModel) QueryByName(name string) (list []*entity.DataUser, err error
 }
 
 func (u *userModel) QueryWithRowsScan(name string) (err error) {
-	db, err := u.getWriteDB()
+	db, err := u.getDB(false)
 
 	if err != nil {
 		return
@@ -122,7 +122,7 @@ func (u *userModel) QueryWithRowsScan(name string) (err error) {
 }
 
 func (u *userModel) PageQuery(page int, pageSize int) (list []*entity.DataUserPart, err error) {
-	db, err := u.getWriteDB()
+	db, err := u.getDB(false)
 
 	if err != nil {
 		return
@@ -148,7 +148,7 @@ func (u *userModel) ConditionId(db *gorm.DB) *gorm.DB {
 }
 
 func (u *userModel) QueryWithScope() (list []*entity.DataUser, err error) {
-	db, err := u.getWriteDB()
+	db, err := u.getDB(false)
 
 	if err != nil {
 		return
@@ -163,7 +163,7 @@ func (u *userModel) QueryWithScope() (list []*entity.DataUser, err error) {
 }
 
 func (u *userModel) QueryUserCount() (count int64, err error) {
-	db, err := u.getWriteDB()
+	db, err := u.getDB(false)
 
 	if err != nil {
 		return
@@ -174,7 +174,7 @@ func (u *userModel) QueryUserCount() (count int64, err error) {
 }
 
 func (u *userModel) QueryByRaw() (list []*entity.DataUser, err error) {
-	db, err := u.getWriteDB()
+	db, err := u.getDB(false)
 
 	if err != nil {
 		return
@@ -186,7 +186,7 @@ func (u *userModel) QueryByRaw() (list []*entity.DataUser, err error) {
 }
 
 func (u *userModel) Trans() (err error) {
-	db, err := u.getWriteDB()
+	db, err := u.getDB(true)
 	if err != nil {
 		return
 	}

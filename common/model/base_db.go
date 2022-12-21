@@ -21,61 +21,58 @@ func createDBModel(readInstance, writeInstance string) *baseDBModel {
 	}
 }
 
-func (d *baseDBModel) getReadDB() (db *gorm.DB, err error) {
-	db, err = common.GetDb(d.readInstance)
+func (m *baseDBModel) getDB(write bool) (db *gorm.DB, err error) {
+	if write {
+		return common.GetDB(m.writeInstance)
+	}
+
+	return common.GetDB(m.readInstance)
+}
+
+func (m *baseDBModel) Add(e entity.IEntity) (err error) {
+	db, err := common.GetDB(m.writeInstance)
 
 	if err != nil {
 		return
 	}
 
+	err = db.Create(e).Error
 	return
 }
 
-func (d *baseDBModel) getWriteDB() (db *gorm.DB, err error) {
-	db, err = common.GetDb(d.writeInstance)
-
-	if err != nil {
-		return
+func (m *baseDBModel) Update(e entity.IEntity, params map[string]interface{}) (err error) {
+	if !e.PrimarySeted() {
+		return ErrPrimaryAttrEmpty
 	}
 
-	return
-}
-
-func (d *baseDBModel) Add(entity entity.IEntity) (err error) {
-	db, err := common.GetDb(d.writeInstance)
-
-	if err != nil {
-		return
-	}
-
-	err = db.Create(entity).Error
-	return
-}
-
-func (d *baseDBModel) Update(entity entity.IEntity, params map[string]interface{}) (err error) {
-	db, err := common.GetDb(d.writeInstance)
+	db, err := common.GetDB(m.writeInstance)
 
 	if err != nil {
 		return
 	}
 
 	if params == nil {
-		err = db.Save(entity).Error
+		err = db.Save(e).Error
 	} else {
-		err = db.Model(entity).Updates(params).Error
+		err = db.Model(e).Updates(params).Error
 	}
 
 	return
 }
 
-func (d *baseDBModel) Get(entity entity.IEntity) (err error) {
-	db, err := common.GetDb(d.writeInstance)
+func (m *baseDBModel) Get(e entity.IEntity) (err error) {
+	if !e.PrimarySeted() {
+		err = ErrPrimaryAttrEmpty
+		return
+	}
+
+	db, err := m.getDB(false)
 
 	if err != nil {
 		return
 	}
 
-	err = db.First(entity).Error
+	err = db.First(e).Error
 
 	return
 }
