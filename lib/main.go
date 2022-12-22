@@ -1,66 +1,67 @@
 package main
 
 import (
-	"confuse/common/entity"
-	"database/sql"
-	"fmt"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
+	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
+	"io"
+	"time"
 )
 
 func main() {
-	dsn := "dev:123!@#qweASD@tcp(127.0.0.1:3306)/test?charset=utf8mb4&parseTime=True&loc=Local"
-	dsn2 := "dev:123!@#qweASD@tcp(127.0.0.1:3306)/test2?charset=utf8mb4&parseTime=True&loc=Local"
-	//db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	//conf := zap.NewDevelopmentConfig()
+	//conf.EncoderConfig.EncodeTime = zapcore.TimeEncoderOfLayout("2006-01-02 15:04:05.000")
+	//conf.OutputPaths = []string{"logs/log.log", "stderr"}
+	//
+	//p, _ := conf.Build()
+	//defer p.Sync()
+	//ps := p.Sugar()
+	//
+	//p.WithOptions()
+	//
+	//p.Info("NewDevelopment", zap.Int("int", 10))
+	//ps.Info("Dev sugar", "test")
+	//ps.Infof("dev sugar f %s", "aaa")
+	//ps.Infof("dev sugar d")
+	//ps.Infow("dev sugar w ", "url", "baidu")
+	//ps.Error("error")
 
-	sqlDB, err := sql.Open("mysql", dsn)
-	db, err := gorm.Open(mysql.New(mysql.Config{
-		Conn: sqlDB,
-	}), &gorm.Config{})
+	encoderConf := zap.NewDevelopmentEncoderConfig()
+	encoderConf.EncodeTime = zapcore.TimeEncoderOfLayout("2006-01-02 15:04:05.000")
+	rotate := getWriter("./logs/confuse")
+	writer := zapcore.AddSync(rotate)
 
-	sqlDB2, err := sql.Open("mysql", dsn2)
-	db2, err := gorm.Open(mysql.New(mysql.Config{
-		Conn: sqlDB2,
-	}), &gorm.Config{})
+	core := zapcore.NewCore(
+		zapcore.NewConsoleEncoder(encoderConf),
+		writer,
+		zap.DebugLevel,
+	)
 
-	//db, err := gorm.Open(mysql.New(mysql.Config{
-	//	DriverName: "my_mysql_driver",
-	//	DSN:        dsn, // data source name, refer https://github.com/go-sql-driver/mysql#dsn-data-source-name
-	//}), &gorm.Config{})
+	p := zap.New(core, zap.AddStacktrace(zap.WarnLevel))
+	ps := p.Sugar()
 
+	p.Info("NewDevelopment", zap.Int("int", 10))
+	ps.Info("Dev sugar", "test")
+	ps.Infof("dev sugar f %s", "aaa")
+	ps.Infof("dev sugar d")
+	ps.Infow("dev sugar w ", "url", "baidu")
+	ps.Error("error")
+
+}
+
+func getWriter(filename string) io.Writer {
+	// 生成rotatelogs的Logger 实际生成的文件名 demo.log.YYmmddHH
+	// demo.log是指向最新日志的链接
+	// 保存7天内的日志，每1小时(整点)分割一次日志
+	hook, err := rotatelogs.New(
+		// 没有使用go风格反人类的format格式
+		filename+".%Y-%m-%d.log",
+		rotatelogs.WithLinkName(filename),
+		rotatelogs.WithMaxAge(time.Hour*24*30),
+		rotatelogs.WithRotationTime(time.Hour*24),
+	)
 	if err != nil {
-		fmt.Printf("err:%s\n", err)
-		return
+		panic(err)
 	}
-
-	//dataUser := &DataUser{Id: 1}
-	//db.First(dataUser)
-
-	dataUser := &entity.DataUser{
-		Name:       "test",
-		CreateTime: 1000,
-		UpdateTime: 2000,
-	}
-
-	err = db.Create(dataUser).Error
-
-	if err != nil {
-		fmt.Printf("Create err:%s\n", err)
-		return
-	}
-
-	dataUser2 := &entity.DataUser{
-		Name:       "test2",
-		CreateTime: 1000,
-		UpdateTime: 2000,
-	}
-
-	err = db2.Create(dataUser2).Error
-
-	if err != nil {
-		fmt.Printf("Create2 err:%s\n", err)
-		return
-	}
-
-	fmt.Printf("%+v \n", dataUser)
+	return hook
 }
