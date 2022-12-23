@@ -1,10 +1,12 @@
 package gorm
 
 import (
+	oLogger "confuse/lib/logger"
 	"errors"
 	"fmt"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	gLogger "gorm.io/gorm/logger"
 	"sync"
 	"time"
 )
@@ -34,13 +36,17 @@ func (c *Config) GetDsn() string {
 type Pool struct {
 	locker  sync.RWMutex
 	clients map[string]*gorm.DB
+	logger  *oLogger.Logger
 }
 
 func (p *Pool) Add(name string, c *Config) error {
 	p.locker.Lock()
 	defer p.locker.Unlock()
 
-	orm, err := gorm.Open(mysql.Open(c.GetDsn()), &gorm.Config{})
+	orm, err := gorm.Open(mysql.Open(c.GetDsn()), &gorm.Config{Logger: &logger{
+		logger:   p.logger,
+		LogLevel: gLogger.Info,
+	}})
 
 	if err != nil {
 		return err
@@ -82,6 +88,6 @@ func (p *Pool) Get(name string) (*gorm.DB, error) {
 	return nil, errors.New("no mysql gorm client")
 }
 
-func NewPool() *Pool {
-	return &Pool{clients: make(map[string]*gorm.DB, 64)}
+func NewPool(logger *oLogger.Logger) *Pool {
+	return &Pool{clients: make(map[string]*gorm.DB, 64), logger: logger}
 }

@@ -49,6 +49,7 @@ func (l *Logger) Init() error {
 
 	core := zapcore.NewCore(
 		zapcore.NewConsoleEncoder(encoderConf),
+		//zapcore.NewMultiWriteSyncer(writer, zapcore.AddSync(os.Stdout)),
 		writer,
 		level,
 	)
@@ -61,43 +62,43 @@ func (l *Logger) Init() error {
 }
 
 func (l *Logger) Debug(args ...any) {
-	l.sugar.Debugln(args)
+	l.sugar.Debugln(args...)
 }
 
 func (l *Logger) Debugf(format string, args ...any) {
-	l.sugar.Debugf(format, args)
+	l.sugar.Debugf(format, args...)
 }
 
 func (l *Logger) Info(args ...any) {
-	l.sugar.Infoln(args)
+	l.sugar.Infoln(args...)
 }
 
 func (l *Logger) Infof(format string, args ...any) {
-	l.sugar.Infof(format, args)
+	l.sugar.Infof(format, args...)
 }
 
 func (l *Logger) Warn(args ...any) {
-	l.sugar.Warnln(args)
+	l.sugar.Warnln(args...)
 }
 
 func (l *Logger) Warnf(format string, args ...any) {
-	l.sugar.Warnf(format, args)
+	l.sugar.Warnf(format, args...)
 }
 
 func (l *Logger) Error(args ...any) {
-	l.sugar.Errorln(args)
+	l.sugar.Errorln(args...)
 }
 
 func (l *Logger) Errorf(format string, args ...any) {
-	l.sugar.Errorf(format, args)
+	l.sugar.Errorf(format, args...)
 }
 
 func (l *Logger) Fatal(args ...any) {
-	l.sugar.Fatalln(args)
+	l.sugar.Fatalln(args...)
 }
 
 func (l *Logger) Fatalf(format string, args ...any) {
-	l.sugar.Fatalf(format, args)
+	l.sugar.Fatalf(format, args...)
 }
 
 func (l *Logger) Sync() error {

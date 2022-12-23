@@ -66,7 +66,7 @@ func main() {
 		return
 	}
 
-	common.Logger.Infof("get user data: %s", dataUser2)
+	common.Logger.Infof("get user data: %s num: %d", dataUser2, 100)
 
 	common.Logger.Error("test")
 
