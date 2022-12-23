@@ -1,9 +1,13 @@
 package config
 
-import "confuse/lib/gorm"
+import (
+	"confuse/lib/gorm"
+	"confuse/lib/logger"
+)
 
 type Config struct {
-	DB map[string]*gorm.Config
+	DB  map[string]*gorm.Config `toml:"db" json:"db"`
+	Log *logger.Config          `toml:"log" json:"log"`
 }
 
 var conf *Config

@@ -1,0 +1,6 @@
+
+[log]
+file_path   = "./logs/confuse"
+level       = "debug"
+time_format = "2006-01-02 15:04:05.000"
+max_age_day = 30

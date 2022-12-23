@@ -37,15 +37,15 @@ func main() {
 		zap.DebugLevel,
 	)
 
-	p := zap.New(core, zap.AddStacktrace(zap.WarnLevel))
+	p := zap.New(core, zap.AddStacktrace(zap.WarnLevel), zap.AddCaller())
 	ps := p.Sugar()
 
-	p.Info("NewDevelopment", zap.Int("int", 10))
 	ps.Info("Dev sugar", "test")
+	ps.Infoln("Dev sugar", "test")
 	ps.Infof("dev sugar f %s", "aaa")
-	ps.Infof("dev sugar d")
-	ps.Infow("dev sugar w ", "url", "baidu")
-	ps.Error("error")
+	//ps.Infof("dev sugar d")
+	//ps.Infow("dev sugar w ", "url", "baidu")
+	//ps.Error("error")
 
 }
 

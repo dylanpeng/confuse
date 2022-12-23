@@ -8,6 +8,8 @@ import (
 	"flag"
 	"fmt"
 	"github.com/BurntSushi/toml"
+	"log"
+	"runtime"
 )
 
 var (
@@ -18,21 +20,28 @@ func main() {
 	// parse flag
 	flag.Parse()
 
+	// set max cpu core
+	runtime.GOMAXPROCS(runtime.NumCPU())
+
 	conf := &config.Config{}
 
-	m, err := toml.DecodeFile(*configFile, conf)
-
-	if err != nil {
-		fmt.Printf("toml decode failed. err: %s | m: %s", err, m)
-		return
+	// init config
+	if _, err := toml.DecodeFile(*configFile, conf); err != nil {
+		log.Fatalf("Fatal Error: can't parse config file!!!\n%s", err)
 	}
 
 	_ = conf.Init()
 
-	err = common.InitDB()
-	if err != nil {
-		fmt.Printf("Init Db failed. err: %s", err)
-		return
+	// init log
+	if err := common.InitLogger(); err != nil {
+		log.Fatalf("Fatal Error: can't initialize logger!!!\n%s", err)
+	}
+
+	defer common.Logger.Sync()
+
+	// init db
+	if err := common.InitDB(); err != nil {
+		log.Fatalf("Fatal Error: can't initialize db clients!!!\n%s", err)
 	}
 
 	//dataUser := &entity.DataUser{
@@ -51,11 +60,15 @@ func main() {
 		Id: 6,
 	}
 
-	err = model.User.Get(dataUser2)
+	err := model.User.Get(dataUser2)
 	if err != nil {
 		fmt.Printf("Get err:%s\n", err)
 		return
 	}
+
+	common.Logger.Infof("get user data: %s", dataUser2)
+
+	common.Logger.Error("test")
 
 	//err = model.User.BatchInsertUsers()
 	//if err != nil {
