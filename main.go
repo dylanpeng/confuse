@@ -44,31 +44,27 @@ func main() {
 		log.Fatalf("Fatal Error: can't initialize db clients!!!\n%s", err)
 	}
 
-	//dataUser := &entity.DataUser{
-	//	Name:       "test",
-	//	CreateTime: 10009,
-	//	UpdateTime: 20009,
-	//}
-	//
-	//err = model.User.Add(dataUser)
-	//if err != nil {
-	//	fmt.Printf("Create err:%s\n", err)
-	//	return
-	//}
-	//
-	dataUser2 := &entity.DataUser{
-		Id: 6,
+	dataUser := &entity.DataUser{
+		Name:       "test",
+		CreateTime: 10009,
+		UpdateTime: 20009,
 	}
 
-	err := model.User.Get(dataUser2)
+	err := model.User.Add(dataUser)
 	if err != nil {
-		fmt.Printf("Get err:%s\n", err)
+		fmt.Printf("Create err:%s\n", err)
 		return
 	}
-
-	common.Logger.Infof("get user data: %s num: %d", dataUser2, 100)
-
-	common.Logger.Error("test")
+	//
+	//dataUser2 := &entity.DataUser{
+	//	Id: 6,
+	//}
+	//
+	//err := model.User.Get(dataUser2)
+	//if err != nil {
+	//	fmt.Printf("Get err:%s\n", err)
+	//	return
+	//}
 
 	//err = model.User.BatchInsertUsers()
 	//if err != nil {
