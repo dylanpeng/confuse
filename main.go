@@ -39,6 +39,9 @@ func main() {
 
 	defer common.Logger.Sync()
 
+	// init cache clients
+	common.InitCache()
+
 	// init db
 	if err := common.InitDB(); err != nil {
 		log.Fatalf("Fatal Error: can't initialize db clients!!!\n%s", err)
@@ -55,16 +58,16 @@ func main() {
 		fmt.Printf("Create err:%s\n", err)
 		return
 	}
-	//
-	//dataUser2 := &entity.DataUser{
-	//	Id: 6,
-	//}
-	//
-	//err := model.User.Get(dataUser2)
-	//if err != nil {
-	//	fmt.Printf("Get err:%s\n", err)
-	//	return
-	//}
+
+	dataUser2 := &entity.DataUser{
+		Id: 6,
+	}
+
+	_, err = model.User.Get(dataUser2)
+	if err != nil {
+		fmt.Printf("Get err:%s\n", err)
+		return
+	}
 
 	//err = model.User.BatchInsertUsers()
 	//if err != nil {

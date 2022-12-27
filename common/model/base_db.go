@@ -60,7 +60,7 @@ func (m *baseDBModel) Update(e entity.IEntity, params map[string]interface{}) (e
 	return
 }
 
-func (m *baseDBModel) Get(e entity.IEntity) (err error) {
+func (m *baseDBModel) Get(e entity.IEntity) (exist bool, err error) {
 	if !e.PrimarySeted() {
 		err = ErrPrimaryAttrEmpty
 		return
@@ -69,10 +69,18 @@ func (m *baseDBModel) Get(e entity.IEntity) (err error) {
 	db, err := m.getDB(false)
 
 	if err != nil {
-		return
+		return false, err
 	}
 
 	err = db.First(e).Error
 
-	return
+	if err == gorm.ErrRecordNotFound {
+		return false, nil
+	}
+
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
 }

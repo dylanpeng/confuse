@@ -13,8 +13,12 @@ type DataUser struct {
 	//Ex         *DataUserExtend `gorm:"foreignKey:Id;references:Id;"`
 }
 
-func (*DataUser) TableName() string {
+func (e *DataUser) TableName() string {
 	return "data_user"
+}
+
+func (e *DataUser) PrimaryPairs() []interface{} {
+	return []interface{}{"id", e.Id}
 }
 
 func (e *DataUser) PrimarySeted() bool {
@@ -30,8 +34,12 @@ type DataUserPart struct {
 	Name string
 }
 
-func (*DataUserPart) TableName() string {
+func (e *DataUserPart) TableName() string {
 	return "data_user"
+}
+
+func (e *DataUserPart) PrimaryPairs() []interface{} {
+	return []interface{}{"id", e.Id}
 }
 
 func (e *DataUserPart) PrimarySeted() bool {
@@ -42,9 +50,9 @@ func (e *DataUserPart) String() string {
 	return fmt.Sprintf("%+v", *e)
 }
 
-func (u *DataUserPart) AfterFind(db *gorm.DB) (err error) {
-	if u != nil {
-		fmt.Printf("query success. DataUserPart: %+v", u)
+func (e *DataUserPart) AfterFind(db *gorm.DB) (err error) {
+	if e != nil {
+		fmt.Printf("query success. DataUserPart: %+v", e)
 	}
 	return
 }

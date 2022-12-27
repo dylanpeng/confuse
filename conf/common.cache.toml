@@ -1,0 +1,8 @@
+
+[cache.main-master]
+host      = "127.0.0.1"
+port      = 6379
+
+[cache.main-slave]
+host      = "127.0.0.1"
+port      = 6379

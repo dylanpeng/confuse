@@ -4,9 +4,12 @@ import (
 	"confuse/common/config"
 	"confuse/lib/gorm"
 	"confuse/lib/logger"
+	"confuse/lib/redis"
+	oRedis "github.com/go-redis/redis/v9"
 	oGorm "gorm.io/gorm"
 )
 
+var cachePool *redis.Pool
 var dbPool *gorm.Pool
 var Logger *logger.Logger
 
@@ -29,6 +32,19 @@ func InitDB() (err error) {
 	return nil
 }
 
+func InitCache() {
+	confs := config.GetConfig().Cache
+	cachePool = redis.NewPool()
+
+	for k, v := range confs {
+		cachePool.Add(k, v)
+	}
+}
+
 func GetDB(name string) (*oGorm.DB, error) {
 	return dbPool.Get(name)
+}
+
+func GetCache(name string) (*oRedis.Client, error) {
+	return cachePool.Get(name)
 }
