@@ -7,9 +7,10 @@ import (
 )
 
 type Config struct {
-	Cache map[string]*redis.Config `toml:"cache" json:"cache"`
-	DB    map[string]*gorm.Config  `toml:"db" json:"db"`
-	Log   *logger.Config           `toml:"log" json:"log"`
+	Cache        map[string]*redis.Config        `toml:"cache" json:"cache"`
+	CacheCluster map[string]*redis.ClusterConfig `toml:"cache_cluster" json:"cache_cluster"`
+	DB           map[string]*gorm.Config         `toml:"db" json:"db"`
+	Log          *logger.Config                  `toml:"log" json:"log"`
 }
 
 var conf *Config

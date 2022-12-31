@@ -41,6 +41,8 @@ func GetKey(prefix string, items ...interface{}) string {
 
 // init redis pool
 func TestInitPool(t *testing.T) {
+	t.Skip()
+
 	cachePool = NewPool()
 
 	conf := &Config{
@@ -73,7 +75,7 @@ func TestInitPool(t *testing.T) {
 
 // redis cache get set
 func TestCacheGetSet(t *testing.T) {
-	//t.Skip()
+	t.Skip()
 
 	userMarshal, err := json.Marshal(user)
 
@@ -110,7 +112,7 @@ func TestCacheGetSet(t *testing.T) {
 
 // redis incr
 func TestIncr(t *testing.T) {
-	//t.Skip()
+	t.Skip()
 
 	key := GetKey("test", "cache", "incr")
 	result, err := cache.Incr(ctx, key).Result()
@@ -146,7 +148,7 @@ func TestIncr(t *testing.T) {
 
 // redis hget hset
 func TestHGetSet(t *testing.T) {
-	//t.Skip()
+	t.Skip()
 
 	key := GetKey("test", "cache", "hget")
 
@@ -173,7 +175,7 @@ func TestHGetSet(t *testing.T) {
 
 // redis lpush lpop
 func TestLPushPop(t *testing.T) {
-	//t.Skip()
+	t.Skip()
 
 	key := GetKey("test", "cache", "LPush")
 
@@ -200,7 +202,7 @@ func TestLPushPop(t *testing.T) {
 
 // redis sadd spop
 func TestSAddPop(t *testing.T) {
-	//t.Skip()
+	t.Skip()
 
 	key := GetKey("test", "cache", "sAdd")
 
@@ -237,7 +239,7 @@ func TestSAddPop(t *testing.T) {
 
 // redis zadd
 func TestZAdd(t *testing.T) {
-	//t.Skip()
+	t.Skip()
 
 	key := GetKey("test", "cache", "zadd")
 
@@ -289,6 +291,8 @@ func TestZAdd(t *testing.T) {
 
 // redis geo
 func TestGeo(t *testing.T) {
+	t.Skip()
+
 	key := GetKey("test", "cache", "geo")
 
 	locations := make([]*redis.GeoLocation, 0)

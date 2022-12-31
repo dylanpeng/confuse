@@ -10,6 +10,7 @@ import (
 )
 
 var cachePool *redis.Pool
+var cacheClusterPool *redis.ClusterPool
 var dbPool *gorm.Pool
 var Logger *logger.Logger
 
@@ -47,4 +48,17 @@ func GetDB(name string) (*oGorm.DB, error) {
 
 func GetCache(name string) (*oRedis.Client, error) {
 	return cachePool.Get(name)
+}
+
+func InitCacheCluster() {
+	confs := config.GetConfig().CacheCluster
+	cacheClusterPool = redis.NewClusterPool()
+
+	for k, v := range confs {
+		cacheClusterPool.Add(k, v)
+	}
+}
+
+func GetCacheCluster(name string) (*oRedis.ClusterClient, error) {
+	return cacheClusterPool.Get(name)
 }
