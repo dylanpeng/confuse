@@ -3,6 +3,7 @@ package common
 import (
 	"confuse/common/config"
 	"confuse/lib/gorm"
+	"confuse/lib/http"
 	"confuse/lib/logger"
 	"confuse/lib/redis"
 	oRedis "github.com/go-redis/redis/v9"
@@ -13,6 +14,7 @@ var cachePool *redis.Pool
 var cacheClusterPool *redis.ClusterPool
 var dbPool *gorm.Pool
 var Logger *logger.Logger
+var HttpServer *http.Server
 
 func InitLogger() (err error) {
 	conf := config.GetConfig().Log
@@ -61,4 +63,10 @@ func InitCacheCluster() {
 
 func GetCacheCluster(name string) (*oRedis.ClusterClient, error) {
 	return cacheClusterPool.Get(name)
+}
+
+func InitHttpServer(router http.Router) {
+	c := config.GetConfig().Server.Http
+	HttpServer = http.NewServer(c, router, Logger)
+	HttpServer.Start()
 }

@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package common_service;
+option go_package = "lib/proto/common_service";
+
+service CommonService {
+    rpc CommonTest(common.Empty) returns (common.Response){}
+}

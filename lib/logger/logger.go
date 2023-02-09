@@ -25,8 +25,9 @@ func DefaultConfig() *Config {
 }
 
 type Logger struct {
-	conf  *Config
-	sugar *zap.SugaredLogger
+	conf   *Config
+	sugar  *zap.SugaredLogger
+	writer io.WriteCloser
 }
 
 func (l *Logger) Init() error {
@@ -39,8 +40,11 @@ func (l *Logger) Init() error {
 	// 日志时间格式
 	encoderConf.EncodeTime = zapcore.TimeEncoderOfLayout(l.conf.TimeFormat)
 	// 按天分文件
-	rotate := getWriter(l.conf.FilePath, l.conf.MaxAgeDay)
-	writer := zapcore.AddSync(rotate)
+	loggerWriter := getWriter(l.conf.FilePath, l.conf.MaxAgeDay)
+	// set logger writer
+	l.writer = loggerWriter
+	// convert zap writer
+	writer := zapcore.AddSync(loggerWriter)
 	level, err := zapcore.ParseLevel(l.conf.Level)
 
 	if err != nil {
@@ -55,10 +59,14 @@ func (l *Logger) Init() error {
 	)
 
 	// warn error级别日志打出调用链,并跳过封装路径
-	p := zap.New(core, zap.AddStacktrace(zap.WarnLevel), zap.AddCaller(), zap.AddCallerSkip(1))
+	p := zap.New(core, zap.AddStacktrace(zap.ErrorLevel), zap.AddCaller(), zap.AddCallerSkip(1))
 	l.sugar = p.Sugar()
 
 	return nil
+}
+
+func (l *Logger) GetWriter() io.Writer {
+	return l.writer
 }
 
 func (l *Logger) Debug(args ...any) {
@@ -81,7 +89,7 @@ func (l *Logger) Warn(args ...any) {
 	l.sugar.Warnln(args...)
 }
 
-func (l *Logger) Warnf(format string, args ...any) {
+func (l *Logger) Warningf(format string, args ...any) {
 	l.sugar.Warnf(format, args...)
 }
 
@@ -105,6 +113,10 @@ func (l *Logger) Sync() error {
 	return l.sugar.Sync()
 }
 
+func (l *Logger) Close() error {
+	return l.writer.Close()
+}
+
 func NewLogger(conf *Config) (l *Logger, err error) {
 	l = &Logger{conf: conf}
 	err = l.Init()
@@ -112,7 +124,7 @@ func NewLogger(conf *Config) (l *Logger, err error) {
 	return
 }
 
-func getWriter(filename string, maxAgeDay int) io.Writer {
+func getWriter(filename string, maxAgeDay int) io.WriteCloser {
 	// 生成rotatelogs的Logger 实际生成的文件名 demo.log.YYmmddHH
 	// demo.log是指向最新日志的链接
 	// 保存7天内的日志，每1小时(整点)分割一次日志

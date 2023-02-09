@@ -1,15 +1,15 @@
 package main
 
 import (
+	"confuse/api/config"
+	"confuse/api/router"
 	"confuse/common"
-	"confuse/common/config"
-	"confuse/common/entity"
-	"confuse/common/model"
 	"flag"
-	"fmt"
-	"github.com/BurntSushi/toml"
 	"log"
+	"os"
+	"os/signal"
 	"runtime"
+	"syscall"
 )
 
 var (
@@ -23,21 +23,20 @@ func main() {
 	// set max cpu core
 	runtime.GOMAXPROCS(runtime.NumCPU())
 
-	conf := &config.Config{}
-
-	// init config
-	if _, err := toml.DecodeFile(*configFile, conf); err != nil {
+	// parse config file
+	if err := config.Init(*configFile); err != nil {
 		log.Fatalf("Fatal Error: can't parse config file!!!\n%s", err)
 	}
-
-	_ = conf.Init()
 
 	// init log
 	if err := common.InitLogger(); err != nil {
 		log.Fatalf("Fatal Error: can't initialize logger!!!\n%s", err)
 	}
 
-	defer common.Logger.Sync()
+	defer func() {
+		_ = common.Logger.Sync()
+		_ = common.Logger.Close()
+	}()
 
 	// init cache clients
 	common.InitCache()
@@ -47,27 +46,51 @@ func main() {
 		log.Fatalf("Fatal Error: can't initialize db clients!!!\n%s", err)
 	}
 
-	dataUser := &entity.DataUser{
-		Name:       "test",
-		CreateTime: 10009,
-		UpdateTime: 20009,
-	}
+	// start http server
+	common.InitHttpServer(router.Router)
+	common.Logger.Infof("http server start at <%s>", config.GetConfig().Server.Http.GetAddr())
 
-	err := model.User.Add(dataUser)
-	if err != nil {
-		fmt.Printf("Create err:%s\n", err)
-		return
+	// waitting for exit signal
+	exit := make(chan os.Signal, 1)
+	stopSigs := []os.Signal{
+		syscall.SIGHUP,
+		syscall.SIGINT,
+		syscall.SIGQUIT,
+		syscall.SIGABRT,
+		syscall.SIGKILL,
+		syscall.SIGTERM,
 	}
+	signal.Notify(exit, stopSigs...)
 
-	dataUser2 := &entity.DataUser{
-		Id: 6,
-	}
+	// catch exit signal
+	sign := <-exit
+	common.Logger.Infof("stop by exit signal '%s'", sign)
 
-	_, err = model.User.Get(dataUser2)
-	if err != nil {
-		fmt.Printf("Get err:%s\n", err)
-		return
-	}
+	// stop http server
+	common.HttpServer.Stop()
+	common.Logger.Info("http server stoped")
+
+	//dataUser := &entity.DataUser{
+	//	Name:       "test",
+	//	CreateTime: 10009,
+	//	UpdateTime: 20009,
+	//}
+	//
+	//err := model.User.Add(dataUser)
+	//if err != nil {
+	//	fmt.Printf("Create err:%s\n", err)
+	//	return
+	//}
+	//
+	//dataUser2 := &entity.DataUser{
+	//	Id: 6,
+	//}
+	//
+	//_, err = model.User.Get(dataUser2)
+	//if err != nil {
+	//	fmt.Printf("Get err:%s\n", err)
+	//	return
+	//}
 
 	//err = model.User.BatchInsertUsers()
 	//if err != nil {

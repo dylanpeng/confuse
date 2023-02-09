@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package confuse_api;
+option go_package = "lib/proto/confuse_api";
+
+// HTTP POST request: /api/home
+message HomeReq {
+    int64 user_id = 1;
+
+    string user_name = 2;
+}
+
+// HTTP POST request: /api/home
+message HomeRsp {
+    // response code
+    int64 code = 1;
+    // response message
+    string message = 2;
+
+    HomeData data = 3;
+}
+
+message HomeData {
+    int64 user_id = 1;
+
+    string user_name = 2;
+}

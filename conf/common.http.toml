@@ -1,0 +1,18 @@
+
+[app]
+name          = "api"
+project       = "confuse"
+env           = "prod"
+debug         = false
+http_code     = "json"
+tcp_code      = "protobuf"
+
+[server]
+bind_interface = ""
+
+[server.http]
+host           = "0.0.0.0"
+port           = 15081
+charset        = "UTF-8"
+gzip           = true
+pprof          = true

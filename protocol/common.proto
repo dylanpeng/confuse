@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package common;
+option go_package = "lib/proto/common";
+
+message Empty {
+}
+
+// HTTP common response
+message Response {
+    // response code
+    int32 code = 1;
+
+    // response message
+    string message = 2;
+}
+
+message Error {
+    // response code
+    int32 code = 1;
+
+    // response message
+    string message = 2;
+}
+
+message ErrResp {
+    Error err = 1;
+}
+
+// HTTP GET response: /health
+message HealthRsp {
+    // response code
+    int32 code = 1;
+
+    // response message
+    string message = 2;
+
+    // timestamp
+    int64 timestamp = 3;
+}
