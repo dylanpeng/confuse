@@ -15,7 +15,8 @@ func TestInitClusterPool(t *testing.T) {
 	cacheClusterPool = NewClusterPool()
 
 	conf := &ClusterConfig{
-		Addrs: []string{"127.0.0.1:8001", "127.0.0.1:8002", "127.0.0.1:8003", "127.0.0.1:8004", "127.0.0.1:8005", "127.0.0.1:8006"},
+		// 只需要设置主节点，不需要设置从节点
+		Addrs: []string{"127.0.0.1:8001", "127.0.0.1:8002", "127.0.0.1:8003"},
 	}
 
 	cacheClusterPool.Add("test", conf)
