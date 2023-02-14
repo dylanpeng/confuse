@@ -5,6 +5,14 @@ import (
 	gjwt "github.com/golang-jwt/jwt/v4"
 )
 
+/*
+ES256 = ECDSA 使用 P-256 和 SHA-256
+
+在椭圆曲线数字签名算法 (ECDSA) 的情况下，ES256 中引用散列算法的数字也与曲线有关。
+ES256 使用 P-256(secp256r1，又名 prime256v1)，ES384 使用 P-384(secp384r1)，而奇怪的是，ES512 使用 P-521(secp521r1)。
+是的，521。是的，连微软[13]都打错了。
+*/
+
 const (
 	SignMethodES256 = "ES256"
 	SignMethodES384 = "ES384"
