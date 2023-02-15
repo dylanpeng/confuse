@@ -32,10 +32,12 @@ func (r *router) RegHttpHandler(app *gin.Engine) {
 	userGroup := app.Group("/api/user")
 	{
 		userGroup.POST("/login", control.User.Login)
+		userGroup.POST("/refresh", control.User.RefreshToken)
 	}
 
 	authUserGroup := app.Group("/api/user", apiMiddelware.Auth)
 	{
+		authUserGroup.POST("/logout", control.User.Logout)
 		authUserGroup.POST("/info", control.User.GetInfo)
 	}
 }

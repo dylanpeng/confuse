@@ -13,7 +13,7 @@ import (
 )
 
 func GetKey(prefix string, items ...interface{}) string {
-	format := prefix + strings.Repeat(":%v", len(items))
+	format := config.GetConfig().App.GetKeyPrefix() + prefix + strings.Repeat(":%v", len(items))
 	return fmt.Sprintf(format, items...)
 }
 

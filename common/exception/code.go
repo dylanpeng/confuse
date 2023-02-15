@@ -30,6 +30,7 @@ const (
 	CodeTokenInvalid = iota + 201
 	CodeIsRefreshToken
 	CodeTokenConvertFail
+	CodeTokenCovered
 )
 
 var Desces = map[int]string{
@@ -57,4 +58,5 @@ var Desces = map[int]string{
 	CodeTokenInvalid:     "token is invalid",
 	CodeIsRefreshToken:   "token is refresh token, can use as normal token",
 	CodeTokenConvertFail: "token convert fail",
+	CodeTokenCovered:     "token had been covered",
 }

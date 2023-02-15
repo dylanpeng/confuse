@@ -5,6 +5,7 @@ import (
 	"confuse/common"
 	"confuse/common/consts"
 	ctrl "confuse/common/control"
+	"confuse/common/exception"
 	"confuse/lib/proto/confuse_api"
 	"github.com/gin-gonic/gin"
 )
@@ -41,12 +42,54 @@ func (c *userCtrl) Login(ctx *gin.Context) {
 }
 
 func (c *userCtrl) GetInfo(ctx *gin.Context) {
-	rsp := &confuse_api.UserData{
-		Id:   "123456",
-		Name: "user_name",
+	authUser := service.User.GetContextUser(ctx)
+
+	if authUser == nil {
+		ctrl.Exception(ctx, exception.New(exception.CodeInternalError))
+		return
 	}
 
-	common.Logger.Debugf("get user info. | trace_id: %s | user_info: %+v", common.GetTraceId(ctx), rsp)
+	common.Logger.Debugf("get user info. | trace_id: %s | user_info: %+v", common.GetTraceId(ctx), authUser)
+
+	ctrl.SendRsp(ctx, authUser)
+}
+
+func (c *userCtrl) Logout(ctx *gin.Context) {
+	authUser := service.User.GetContextUser(ctx)
+
+	if authUser == nil {
+		ctrl.Exception(ctx, exception.New(exception.CodeInternalError))
+		return
+	}
+
+	service.User.Logout(authUser.Id)
+
+	ctrl.SendRsp(ctx, authUser)
+}
+
+func (c *userCtrl) RefreshToken(ctx *gin.Context) {
+	req := &confuse_api.RefreshTokenReq{}
+
+	if !ctrl.DecodeReq(ctx, req) {
+		return
+	}
+
+	if !ctrl.ParamAssert(ctx, req, req.RefreshToken == "") {
+		return
+	}
+
+	token, err := service.User.RefreshToken(req.RefreshToken)
+
+	if err != nil {
+		ctrl.Error(ctx, err.GetCode())
+		return
+	}
+
+	rsp := &confuse_api.RefreshTokenRsp{
+		Code:    consts.RespCodeSuccess,
+		Message: consts.RespMsgSuccess,
+		Data:    token,
+	}
 
 	ctrl.SendRsp(ctx, rsp)
 }

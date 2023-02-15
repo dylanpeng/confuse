@@ -12,10 +12,12 @@ const (
 )
 
 type Config struct {
-	PrivateKey string `toml:"private_key" json:"private_key"`
-	PublicKey  string `toml:"public_key" json:"public_key"`
-	SignType   string `toml:"sign_type" json:"sign_type"`
-	SignMethod string `toml:"sign_method" json:"sign_method"`
+	PrivateKey        string `toml:"private_key" json:"private_key"`
+	PublicKey         string `toml:"public_key" json:"public_key"`
+	SignType          string `toml:"sign_type" json:"sign_type"`
+	SignMethod        string `toml:"sign_method" json:"sign_method"`
+	ExpireTime        int    `toml:"expire_time" json:"expire_time"`
+	RefreshExpireTime int    `toml:"refresh_expire_time" json:"refresh_expire_time"`
 }
 
 type JwtClient struct {

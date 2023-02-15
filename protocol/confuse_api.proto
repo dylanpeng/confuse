@@ -55,3 +55,17 @@ message UserData {
 
     string name = 2;
 }
+
+// HTTP POST request: /api/user/refresh
+message RefreshTokenReq {
+    string refresh_token = 1;
+}
+
+// HTTP POST request: /api/user/refresh
+message RefreshTokenRsp {
+    int64 code = 1;
+
+    string message = 2;
+
+    TokenData data = 3;
+}

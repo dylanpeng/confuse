@@ -22,3 +22,4 @@ private_key    = "MFkwEwYHKoZIzj0C"
 public_key     = ""
 sign_type      = "HS"
 sign_method    = "HS256"
+expire_time    = 3

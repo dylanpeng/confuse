@@ -7,7 +7,10 @@ import (
 	"confuse/common/control"
 	"confuse/common/entity"
 	"confuse/common/exception"
+	"confuse/common/model"
+	"confuse/lib/proto/confuse_api"
 	"github.com/gin-gonic/gin"
+	"strconv"
 	"strings"
 )
 
@@ -46,7 +49,27 @@ func Auth(ctx *gin.Context) {
 		return
 	}
 
-	ctx.Set("user", userClaim)
+	uId, _ := strconv.ParseInt(userClaim.UserId, 10, 64)
+	currentToken, e := model.Token.GetTokenByUserId(uId)
 
-	return
+	if e != nil {
+		common.Logger.Infof("get redis token fail. | err: %s", e)
+		control.Exception(ctx, exception.New(exception.CodeInternalError))
+		ctx.Abort()
+		return
+	}
+
+	if currentToken != tokenString {
+		common.Logger.Infof("token not equal. | err: %s", e)
+		control.Exception(ctx, exception.New(exception.CodeTokenCovered))
+		ctx.Abort()
+		return
+	}
+
+	ctx.Set(consts.CtxValueAuth, &confuse_api.UserData{
+		Id:   userClaim.UserId,
+		Name: userClaim.Name,
+	})
+
+	ctx.Next()
 }
