@@ -3,6 +3,7 @@ package main
 import (
 	"confuse/api/config"
 	"confuse/api/router"
+	"confuse/api/util"
 	"confuse/common"
 	"flag"
 	"log"
@@ -44,6 +45,11 @@ func main() {
 	// init db
 	if err := common.InitDB(); err != nil {
 		log.Fatalf("Fatal Error: can't initialize db clients!!!\n%s", err)
+	}
+
+	// init jwt
+	if err := util.InitJwtClient(); err != nil {
+		log.Fatalf("Fatal Error: can't initialize jwt clients!!!\n%s", err)
 	}
 
 	// start http server

@@ -5,6 +5,7 @@ const (
 	CtxValueRequest  = "context.value.request.value"
 	CtxValueAuth     = "context.value.auth.user"
 	CtxValueLanguage = "context.value.language"
+	CtxValueTraceId  = "context.value.trace.id"
 )
 
 const (
@@ -17,4 +18,5 @@ const (
 	HeaderKeyPlatform    = "Platform"
 	HeaderKeyDeviceId    = "Device_id"
 	HeaderKeyPackageName = "pn"
+	HeaderKeyTraceId     = "TraceId"
 )

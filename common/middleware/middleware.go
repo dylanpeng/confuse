@@ -2,8 +2,10 @@ package middleware
 
 import (
 	"confuse/common"
+	"confuse/common/consts"
 	"confuse/lib/coder"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"net/http"
 )
 
@@ -27,6 +29,26 @@ func CrossDomain(ctx *gin.Context) {
 	if ctx.Request.Method == "OPTIONS" {
 		ctx.AbortWithStatus(http.StatusOK)
 	}
+
+	ctx.Next()
+}
+
+func Trace(ctx *gin.Context) {
+	traceId := ctx.GetHeader(consts.HeaderKeyTraceId)
+
+	if traceId != "" {
+		ctx.Set(consts.CtxValueTraceId, traceId)
+		return
+	}
+
+	trace, exist := ctx.Get(consts.CtxValueTraceId)
+
+	if exist {
+		ctx.Set(consts.CtxValueTraceId, trace.(string))
+		return
+	}
+
+	ctx.Set(consts.CtxValueTraceId, uuid.New().String())
 
 	ctx.Next()
 }

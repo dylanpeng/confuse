@@ -1,6 +1,7 @@
 package control
 
 import (
+	"confuse/common"
 	"confuse/common/consts"
 	ctrl "confuse/common/control"
 	"confuse/lib/proto/confuse_api"
@@ -30,6 +31,8 @@ func (c *homeCtrl) HomePage(ctx *gin.Context) {
 			UserName: req.UserName,
 		},
 	}
+
+	common.Logger.Debugf("traceId: %s", common.GetTraceId(ctx))
 
 	ctrl.SendRsp(ctx, rsp)
 }

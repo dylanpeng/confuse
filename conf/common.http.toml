@@ -16,3 +16,9 @@ port           = 15081
 charset        = "UTF-8"
 gzip           = true
 pprof          = true
+
+[jwt]
+private_key    = "MFkwEwYHKoZIzj0C"
+public_key     = ""
+sign_type      = "HS"
+sign_method    = "HS256"

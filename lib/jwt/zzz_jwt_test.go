@@ -65,7 +65,7 @@ func TestInitJwtClient(t *testing.T) {
 
 // init get token string
 func TestGetTokenString(t *testing.T) {
-	tokenString, err := jwtClient.GenerateToke(myClaims)
+	tokenString, err := jwtClient.GenerateToken(myClaims)
 
 	if err != nil {
 		t.Fatalf("init jwt fail. err: %s", err)

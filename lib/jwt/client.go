@@ -23,7 +23,7 @@ type JwtClient struct {
 	keyProvider IKeyProvider
 }
 
-func (c *JwtClient) GenerateToke(claims gjwt.Claims) (tokenString string, err error) {
+func (c *JwtClient) GenerateToken(claims gjwt.Claims) (tokenString string, err error) {
 	token := gjwt.NewWithClaims(c.keyProvider.GetSigningMethod(), claims)
 	tokenString, err = token.SignedString(c.keyProvider.GetPrivateKey())
 

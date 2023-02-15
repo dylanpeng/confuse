@@ -25,3 +25,33 @@ message HomeData {
 
     string user_name = 2;
 }
+
+// HTTP POST request: /api/login
+message LoginReq {
+    string account = 1;
+
+    string password = 2;
+}
+
+// HTTP POST request: /api/login
+message LoginRsp {
+    int64 code = 1;
+
+    string message = 2;
+
+    TokenData data = 3;
+}
+
+message TokenData {
+    string token = 1;
+
+    string refresh_token = 2;
+
+    UserData user = 3;
+}
+
+message UserData {
+    string id = 1;
+
+    string name = 2;
+}

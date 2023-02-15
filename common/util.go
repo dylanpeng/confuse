@@ -4,6 +4,7 @@ import (
 	"confuse/common/config"
 	"confuse/common/consts"
 	"confuse/lib/coder"
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -64,4 +65,15 @@ func SetCtxCoder(ctx *gin.Context, encoding string) {
 	if encoding == coder.EncodingProtobuf || encoding == coder.EncodingJson {
 		ctx.Set(consts.CtxCoderKey, encoding)
 	}
+}
+
+func GetTraceId(ctx context.Context) string {
+	trace := ctx.Value(consts.CtxValueTraceId)
+	traceId, ok := trace.(string)
+
+	if ok {
+		return traceId
+	}
+
+	return ""
 }

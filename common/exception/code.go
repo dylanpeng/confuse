@@ -27,27 +27,9 @@ const (
 )
 
 const (
-	CodeReceiveFail = iota + 201
-	CodeUserAlreadyRegistered
-	CodeUserAlreadyInvited
-	CodeOtpSendFailed
-	CodeOtpVerifyFailed
-	CodeActivityExpired
-)
-
-const (
-	CodeSubCategoryHaveOnlinePushCannotDeleted = iota + 301
-	CodePushConfigCannotDeleted
-	CodePushConfigCannotOnline
-	CodePushConfigExpired
-)
-
-const (
-	CodePromotionNameExist = iota + 1001
-	CodePromotionCodeExist
-	CodePromotionNotExist
-	CodePromotionReportExpired
-	CodePromotionReported
+	CodeTokenInvalid = iota + 201
+	CodeIsRefreshToken
+	CodeTokenConvertFail
 )
 
 var Desces = map[int]string{
@@ -72,16 +54,7 @@ var Desces = map[int]string{
 	CodeFileUploadFailed: "upload file failed",
 	CodeFileReadFailed:   "read file failed",
 
-	CodeReceiveFail:           "failed to claim bonus",
-	CodeUserAlreadyRegistered: "This user is already registered and cannot claim the reward",
-	CodeUserAlreadyInvited:    "This user has been invited. You can download opay directly to receive rewards",
-	CodeOtpSendFailed:         "SMS OTP sending failed",
-	CodeOtpVerifyFailed:       "SMS OTP verify failed",
-	CodeActivityExpired:       "The activity has expired",
-
-	CodePromotionNameExist:     "promotion merchant name has been used",
-	CodePromotionCodeExist:     "promotion code name has been used",
-	CodePromotionNotExist:      "promotion merchant does not exist",
-	CodePromotionReportExpired: "promotion report information has expired",
-	CodePromotionReported:      "promotion information has been reported",
+	CodeTokenInvalid:     "token is invalid",
+	CodeIsRefreshToken:   "token is refresh token, can use as normal token",
+	CodeTokenConvertFail: "token convert fail",
 }

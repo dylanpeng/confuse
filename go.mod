@@ -10,6 +10,7 @@ require (
 	github.com/go-co-op/gocron v1.18.0
 	github.com/go-redis/redis/v9 v9.0.0-rc.2
 	github.com/gogo/protobuf v1.3.2
+	github.com/google/uuid v1.3.0
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
 	go.uber.org/zap v1.24.0
 	gorm.io/driver/mysql v1.4.1
