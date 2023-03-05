@@ -52,12 +52,15 @@ func NewClient(conf *Config, logger *logger.Logger, callback func(event zk.Event
 		conf:     conf,
 		logger:   logger,
 		callback: callback,
+		wg:       &sync.WaitGroup{},
+		ctx:      context.TODO(),
 	}
 
 	conn, _, err := zk.Connect(conf.Addrs, time.Duration(conf.Timeout)*time.Second,
 		zk.WithLogger(&zkLogger{logger}),
 		zk.WithLogInfo(false),
-		zk.WithEventCallback(callback))
+		zk.WithEventCallback(callback),
+	)
 
 	if err != nil {
 		return nil, err
@@ -167,7 +170,7 @@ func (c *Client) GetNode(path string) (data []byte, err error) {
 	return
 }
 
-func (c *Client) GetNodes(path string) (dataMap map[string][]byte, err error) {
+func (c *Client) GetChildrenNodes(path string) (dataMap map[string][]byte, err error) {
 	nodes, _, err := c.conn.Children(path)
 
 	if err != nil {
@@ -196,7 +199,7 @@ func (c *Client) GetNodes(path string) (dataMap map[string][]byte, err error) {
 	return
 }
 
-func (c *Client) GetAllNodes(path string) (dataMap map[string][]byte, err error) {
+func (c *Client) GetAllSubNodes(path string) (dataMap map[string][]byte, err error) {
 	nodes, _, err := c.conn.Children(path)
 
 	if err != nil {
@@ -222,14 +225,15 @@ func (c *Client) GetAllNodes(path string) (dataMap map[string][]byte, err error)
 		dataMap[nodePath] = data
 		var childMap map[string][]byte
 
-		childMap, err = c.GetAllNodes(nodePath)
+		childMap, err = c.GetChildrenNodes(nodePath)
 
 		if err != nil {
+			c.logger.Infof("zookeeper client get child nodes fail. | err: %s", err)
 			return nil, err
 		}
 
 		for k, v := range childMap {
-			dataMap[k] = v
+			dataMap[nodePath+"/"+k] = v
 		}
 
 	}
@@ -247,7 +251,7 @@ func (c *Client) Close() {
 	c.wg.Wait()
 }
 
-func (c *Client) WatchNode(path string, watchType int, callback func(event zk.Event)) {
+func (c *Client) WatchNode(path string, watchType int, do func(event zk.Event)) {
 	c.wg.Add(1)
 
 	go func() {
@@ -285,7 +289,7 @@ func (c *Client) WatchNode(path string, watchType int, callback func(event zk.Ev
 					continue
 				}
 
-				callback(event)
+				do(event)
 			}
 		}
 	}()
