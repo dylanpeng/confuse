@@ -244,6 +244,7 @@ func (c *Client) Children(path string) (children []string, err error) {
 
 func (c *Client) Close() {
 	c.conn.Close()
+	c.wg.Wait()
 }
 
 func (c *Client) WatchNode(path string, watchType int, callback func(event zk.Event)) {
