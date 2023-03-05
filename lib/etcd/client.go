@@ -104,7 +104,7 @@ func (c *Client) GetNode(key string, data any) error {
 func (c *Client) GetRangeNode(prefix string) (result map[string][]byte, err error) {
 	result = make(map[string][]byte)
 
-	rsp, err := c.etcdClient.Get(context.Background(), prefix, clientv3.WithPrefix(), clientv3.WithSort(clientv3.SortByKey, clientv3.SortDescend))
+	rsp, err := c.etcdClient.Get(context.Background(), prefix, clientv3.WithPrefix(), clientv3.WithSort(clientv3.SortByKey, clientv3.SortAscend))
 
 	if err != nil {
 		return nil, err
@@ -117,6 +117,26 @@ func (c *Client) GetRangeNode(prefix string) (result map[string][]byte, err erro
 	}
 
 	return
+}
+
+func (c *Client) DeleteNode(key string) error {
+	_, err := c.etcdClient.Delete(context.Background(), key)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (c *Client) DeleteNodeWithPrefix(prefix string) error {
+	_, err := c.etcdClient.Delete(context.Background(), prefix, clientv3.WithPrefix())
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (c *Client) AddNodeWithLeaseKeepAlive(key string, data any, ttl int64) error {
@@ -166,13 +186,14 @@ func (c *Client) WatchNode(key string, do func(clientv3.WatchResponse, context.C
 	ch := c.etcdClient.Watch(ctx, key)
 
 	go func() {
-		select {
-		case wtRsp := <-ch:
-			do(wtRsp, cancel)
-		case <-ctx.Done():
-			return
+		for {
+			select {
+			case wtRsp := <-ch:
+				do(wtRsp, cancel)
+			case <-ctx.Done():
+				return
+			}
 		}
-
 	}()
 
 	return nil
@@ -180,14 +201,16 @@ func (c *Client) WatchNode(key string, do func(clientv3.WatchResponse, context.C
 
 func (c *Client) WatchNodesWithPrefix(key string, do func(clientv3.WatchResponse, context.CancelFunc)) error {
 	ctx, cancel := context.WithCancel(context.TODO())
-	ch := c.etcdClient.Watch(ctx, key, clientv3.WithPrefix())
+	ch := c.etcdClient.Watch(ctx, key, clientv3.WithPrefix(), clientv3.WithPrevKV())
 
 	go func() {
-		select {
-		case wtRsp := <-ch:
-			do(wtRsp, cancel)
-		case <-ctx.Done():
-			return
+		for {
+			select {
+			case wtRsp := <-ch:
+				do(wtRsp, cancel)
+			case <-ctx.Done():
+				return
+			}
 		}
 	}()
 
