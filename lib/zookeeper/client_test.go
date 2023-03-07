@@ -46,6 +46,8 @@ func init() {
 		return
 	}
 
+	Log.Warningf("test")
+
 	return
 }
 

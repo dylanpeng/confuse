@@ -70,42 +70,82 @@ func (l *Logger) GetWriter() io.Writer {
 }
 
 func (l *Logger) Debug(args ...any) {
+	if l == nil {
+		return
+	}
+
 	l.sugar.Debugln(args...)
 }
 
 func (l *Logger) Debugf(format string, args ...any) {
+	if l == nil {
+		return
+	}
+
 	l.sugar.Debugf(format, args...)
 }
 
 func (l *Logger) Info(args ...any) {
+	if l == nil {
+		return
+	}
+
 	l.sugar.Infoln(args...)
 }
 
 func (l *Logger) Infof(format string, args ...any) {
+	if l == nil {
+		return
+	}
+
 	l.sugar.Infof(format, args...)
 }
 
 func (l *Logger) Warn(args ...any) {
+	if l == nil {
+		return
+	}
+
 	l.sugar.Warnln(args...)
 }
 
 func (l *Logger) Warningf(format string, args ...any) {
+	if l == nil {
+		return
+	}
+
 	l.sugar.Warnf(format, args...)
 }
 
 func (l *Logger) Error(args ...any) {
+	if l == nil {
+		return
+	}
+
 	l.sugar.Errorln(args...)
 }
 
 func (l *Logger) Errorf(format string, args ...any) {
+	if l == nil {
+		return
+	}
+
 	l.sugar.Errorf(format, args...)
 }
 
 func (l *Logger) Fatal(args ...any) {
+	if l == nil {
+		return
+	}
+
 	l.sugar.Fatalln(args...)
 }
 
 func (l *Logger) Fatalf(format string, args ...any) {
+	if l == nil {
+		return
+	}
+
 	l.sugar.Fatalf(format, args...)
 }
 
