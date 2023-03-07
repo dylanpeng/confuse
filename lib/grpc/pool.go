@@ -36,6 +36,7 @@ type Pool struct {
 	idle     time.Duration
 	ttl      time.Duration
 	isClose  bool
+	increase int64
 }
 
 func NewPool(factory Factory, addr string, capacity int, idle time.Duration, ttl ...time.Duration) *Pool {
@@ -61,7 +62,7 @@ func NewPool(factory Factory, addr string, capacity int, idle time.Duration, ttl
 
 func (p *Pool) GetConnChan() chan *ClientConn {
 	p.mu.RLock()
-	defer p.mu.Unlock()
+	defer p.mu.RUnlock()
 	return p.ch
 }
 
@@ -111,6 +112,11 @@ func (p *Pool) Get() (*ClientConn, error) {
 				lastUsed:   time.Now(),
 			}
 
+			p.mu.Lock()
+			clientConn.Id = p.increase
+			p.increase++
+			p.mu.Unlock()
+
 			return clientConn, nil
 		}
 	}
@@ -142,6 +148,7 @@ type ClientConn struct {
 	pool     *Pool
 	createAt time.Time
 	lastUsed time.Time
+	Id       int64
 }
 
 func (c *ClientConn) Release() {
