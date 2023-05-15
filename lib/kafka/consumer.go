@@ -18,6 +18,7 @@ type Consumer struct {
 	client  sarama.ConsumerGroup
 	logger  logger.ILogger
 	ctx     context.Context
+	cancel  context.CancelFunc
 	handler sarama.ConsumerGroupHandler
 }
 
@@ -31,17 +32,19 @@ func NewConsumer(c *ConsumerConfig, logger logger.ILogger, handle func([]byte) e
 		return nil, err
 	}
 
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
 
 	consumer := &Consumer{
 		c:       c,
 		client:  group,
 		logger:  logger,
-		ctx:     ctx,
 		handler: NewConsumerHandler(ctx, c.Worker, logger, handle),
+		ctx:     ctx,
+		cancel:  cancel,
 	}
 
 	go consumer.run()
+
 	return consumer, nil
 }
 
@@ -77,6 +80,8 @@ func (c *Consumer) logErr() {
 }
 
 func (c *Consumer) Stop() {
+	c.cancel()
+
 	if err := c.client.Close(); err != nil {
 		c.logger.Errorf("Consumer Stop Error: %s", err)
 	}
