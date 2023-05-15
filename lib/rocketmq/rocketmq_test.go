@@ -3,7 +3,6 @@ package rocketmq
 import (
 	"confuse/lib/logger"
 	"fmt"
-	"sync"
 	"testing"
 	"time"
 )
@@ -41,7 +40,7 @@ func TestRocketmqProducerConsumer(t *testing.T) {
 	}
 
 	go func() {
-		consumer, _ := NewConsumer(consumerConf, doMessage, Log, true)
+		consumer, _ := NewConsumer(consumerConf, doMessage, Log)
 
 		time.Sleep(15 * time.Second)
 		consumer.Stop()
@@ -58,7 +57,7 @@ func TestRocketmqProducerConsumer(t *testing.T) {
 		RetryTimes: 2,
 	}
 
-	producer, err := NewProducer(producerConf, Log, true)
+	producer, err := NewProducer(producerConf, Log)
 
 	if err != nil {
 		t.Fatalf("NewProducer fail. | err: %s", err)
@@ -67,9 +66,10 @@ func TestRocketmqProducerConsumer(t *testing.T) {
 	go produceMessage(producer)
 	//produceDelayMessage(producer)
 
-	wg := &sync.WaitGroup{}
-	wg.Add(1)
-	wg.Wait()
+	//wg := &sync.WaitGroup{}
+	//wg.Add(1)
+	//wg.Wait()
+	time.Sleep(20 * time.Second)
 	Log.Infof("test over")
 }
 

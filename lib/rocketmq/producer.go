@@ -111,7 +111,7 @@ func (c *Producer) SendAsync(msg *Message) (err error) {
 	return
 }
 
-func NewProducer(c *ProducerConfig, logger logger.ILogger, logQuiet bool) (producer *Producer, err error) {
+func NewProducer(c *ProducerConfig, logger logger.ILogger) (producer *Producer, err error) {
 	opts := []oProducer.Option{
 		oProducer.WithNameServer(c.Endpoints),
 	}
@@ -134,7 +134,7 @@ func NewProducer(c *ProducerConfig, logger logger.ILogger, logQuiet bool) (produ
 
 	rlog.SetLogger(&Logger{
 		logger: logger,
-		quiet:  logQuiet,
+		quiet:  true,
 	})
 
 	p, err := rocketmq.NewProducer(opts...)

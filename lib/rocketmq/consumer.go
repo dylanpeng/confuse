@@ -36,11 +36,6 @@ func (c *Consumer) Stop() {
 	c.mutex.Lock()
 	defer c.mutex.Unlock()
 
-	if err := c.consumer.Unsubscribe(c.c.Topic); err != nil {
-		c.logger.Errorf("rocketmq consumer Unsubscribe failed | error: %s", err)
-		return
-	}
-
 	if err := c.consumer.Shutdown(); err != nil {
 		c.logger.Errorf("rocketmq consumer shutdown failed | error: %s", err)
 		return
@@ -97,7 +92,7 @@ func (c *Consumer) receive(_ context.Context, msgs ...*primitive.MessageExt) (re
 	return oConsumer.ConsumeSuccess, nil
 }
 
-func NewConsumer(conf *ConsumerConfig, handler func([]byte) error, logger *logger.Logger, logQuiet bool) (consumer *Consumer, err error) {
+func NewConsumer(conf *ConsumerConfig, handler func([]byte) error, logger *logger.Logger) (consumer *Consumer, err error) {
 	opts := []oConsumer.Option{
 		oConsumer.WithNameServer(conf.Endpoints),
 		oConsumer.WithConsumerModel(oConsumer.Clustering),
@@ -139,7 +134,7 @@ func NewConsumer(conf *ConsumerConfig, handler func([]byte) error, logger *logge
 		msgQueue: make(chan []byte),
 	}
 
-	rlog.SetLogger(&Logger{logger: logger, quiet: logQuiet})
+	rlog.SetLogger(&Logger{logger: logger, quiet: true})
 
 	if c.consumer, err = rocketmq.NewPushConsumer(opts...); err != nil {
 		return
