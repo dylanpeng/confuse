@@ -113,7 +113,7 @@ func (c *Producer) SendAsync(msg *Message) (err error) {
 
 func NewProducer(c *ProducerConfig, logger logger.ILogger) (producer *Producer, err error) {
 	opts := []oProducer.Option{
-		oProducer.WithNameServer(c.Endpoints),
+		oProducer.WithNsResolver(primitive.NewPassthroughResolver(c.Endpoints)),
 	}
 
 	if c.Group != "" {

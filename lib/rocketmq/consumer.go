@@ -94,7 +94,7 @@ func (c *Consumer) receive(_ context.Context, msgs ...*primitive.MessageExt) (re
 
 func NewConsumer(conf *ConsumerConfig, handler func([]byte) error, logger *logger.Logger) (consumer *Consumer, err error) {
 	opts := []oConsumer.Option{
-		oConsumer.WithNameServer(conf.Endpoints),
+		oConsumer.WithNsResolver(primitive.NewPassthroughResolver(conf.Endpoints)),
 		oConsumer.WithConsumerModel(oConsumer.Clustering),
 		oConsumer.WithGroupName(conf.Group),
 	}

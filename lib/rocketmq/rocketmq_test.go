@@ -31,7 +31,7 @@ func TestRocketmqProducerConsumer(t *testing.T) {
 		Orderly:   true,
 		FromFirst: false,
 		Tags:      nil,
-		Worker:    10,
+		Worker:    1,
 	}
 
 	doMessage := func(v []byte) error {
